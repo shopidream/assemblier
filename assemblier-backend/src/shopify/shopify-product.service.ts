@@ -6,6 +6,7 @@ interface Product {
   name: string;
   price: number;
   options?: string;
+  description?: string;
 }
 
 interface Page {
@@ -33,6 +34,7 @@ export class ShopifyProductService {
             {
               product: {
                 title: product.name,
+                body_html: product.description || '',
                 variants: [
                   {
                     price: product.price.toString(),

@@ -1,0 +1,130 @@
+{% comment %}
+  App Hero Section
+  Displays hero banner with brand name, marketing copy, and CTA button
+{% endcomment %}
+
+<section class="app-hero" id="app-hero-{{ section.id }}">
+  <div class="app-hero__container">
+    <div class="app-hero__content">
+      <h1 class="app-hero__title">{{ section.settings.hero_title }}</h1>
+      <p class="app-hero__subtitle">{{ section.settings.hero_subtitle }}</p>
+      <div class="app-hero__cta">
+        <a href="{{ section.settings.hero_button_link }}" class="app-hero__button">
+          {{ section.settings.hero_button_label }}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .app-hero {
+    background-color: {{ section.settings.hero_bg_color }};
+    background-image: url('{{ section.settings.hero_bg_image | img_url: 'master' }}');
+    background-size: cover;
+    background-position: center;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .app-hero__container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .app-hero__title {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: {{ section.settings.hero_text_color }};
+  }
+
+  .app-hero__subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    color: {{ section.settings.hero_text_color }};
+  }
+
+  .app-hero__button {
+    display: inline-block;
+    padding: 15px 40px;
+    background-color: var(--skin-accent);
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: opacity 0.3s;
+  }
+
+  .app-hero__button:hover {
+    opacity: 0.9;
+  }
+
+  @media (max-width: 768px) {
+    .app-hero__title {
+      font-size: 2rem;
+    }
+
+    .app-hero__subtitle {
+      font-size: 1.2rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "App Hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Hero Title",
+      "default": "Welcome to Our Store"
+    },
+    {
+      "type": "textarea",
+      "id": "hero_subtitle",
+      "label": "Hero Subtitle",
+      "default": "Discover amazing products"
+    },
+    {
+      "type": "text",
+      "id": "hero_button_label",
+      "label": "Button Label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "hero_button_link",
+      "label": "Button Link",
+      "default": "/collections/all"
+    },
+    {
+      "type": "color",
+      "id": "hero_bg_color",
+      "label": "Background Color",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "hero_text_color",
+      "label": "Text Color",
+      "default": "#333333"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_bg_image",
+      "label": "Background Image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "App Hero"
+    }
+  ]
+}
+{% endschema %}

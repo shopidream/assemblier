@@ -1,0 +1,172 @@
+{% comment %}
+  App Header Section
+  Displays logo and navigation menu
+{% endcomment %}
+
+<header class="app-header" id="app-header-{{ section.id }}">
+  <div class="app-header__container">
+    <div class="app-header__logo">
+      {% if section.settings.logo != blank %}
+        <a href="/">
+          <img src="{{ section.settings.logo | img_url: '200x' }}" alt="{{ shop.name }}">
+        </a>
+      {% else %}
+        <a href="/" class="app-header__logo-text">
+          {{ section.settings.logo_text | default: shop.name }}
+        </a>
+      {% endif %}
+    </div>
+
+    <nav class="app-header__nav">
+      <ul class="app-header__nav-list">
+        <li><a href="/">Home</a></li>
+        {% if section.settings.show_collections %}
+          <li><a href="/collections/all">Collections</a></li>
+        {% endif %}
+        <li><a href="/pages/about-us">About</a></li>
+        <li><a href="/pages/contact-us">Contact</a></li>
+      </ul>
+    </nav>
+
+    <button class="app-header__mobile-toggle" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</header>
+
+<style>
+  .app-header {
+    background-color: var(--skin-secondary);
+    border-bottom: 1px solid #e0e0e0;
+    padding: 15px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .app-header__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .app-header__logo-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--skin-primary);
+    text-decoration: none;
+  }
+
+  .app-header__logo img {
+    max-height: 50px;
+  }
+
+  .app-header__nav-list {
+    display: flex;
+    gap: 30px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .app-header__nav-list a {
+    color: var(--skin-text);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+
+  .app-header__nav-list a:hover {
+    color: var(--skin-accent);
+  }
+
+  .app-header__mobile-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+  }
+
+  .app-header__mobile-toggle span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: var(--skin-primary);
+  }
+
+  @media (max-width: 768px) {
+    .app-header__nav {
+      display: none;
+    }
+
+    .app-header__mobile-toggle {
+      display: flex;
+    }
+
+    .app-header__nav.active {
+      display: block;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: var(--skin-secondary);
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .app-header__nav.active .app-header__nav-list {
+      flex-direction: column;
+      gap: 15px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggle = document.querySelector('.app-header__mobile-toggle');
+    const nav = document.querySelector('.app-header__nav');
+
+    if (toggle && nav) {
+      toggle.addEventListener('click', function() {
+        nav.classList.toggle('active');
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "App Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo Image"
+    },
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Logo Text (if no image)",
+      "default": "Store Name"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collections",
+      "label": "Show Collections Link",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "App Header"
+    }
+  ]
+}
+{% endschema %}

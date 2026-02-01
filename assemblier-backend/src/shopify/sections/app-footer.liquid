@@ -1,0 +1,216 @@
+{% comment %}
+  App Footer Section
+  Displays company info, contact details, and policy links
+{% endcomment %}
+
+<footer class="app-footer" id="app-footer-{{ section.id }}">
+  <div class="app-footer__container">
+    <div class="app-footer__main">
+      <div class="app-footer__column">
+        <h3 class="app-footer__heading">{{ section.settings.company_name }}</h3>
+        <p class="app-footer__text">{{ section.settings.company_description }}</p>
+      </div>
+
+      <div class="app-footer__column">
+        <h3 class="app-footer__heading">Contact</h3>
+        <ul class="app-footer__list">
+          {% if section.settings.contact_email != blank %}
+            <li>
+              <a href="mailto:{{ section.settings.contact_email }}">
+                {{ section.settings.contact_email }}
+              </a>
+            </li>
+          {% endif %}
+          {% if section.settings.contact_phone != blank %}
+            <li>
+              <a href="tel:{{ section.settings.contact_phone }}">
+                {{ section.settings.contact_phone }}
+              </a>
+            </li>
+          {% endif %}
+          {% if section.settings.contact_address != blank %}
+            <li>{{ section.settings.contact_address }}</li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <div class="app-footer__column">
+        <h3 class="app-footer__heading">Policies</h3>
+        <ul class="app-footer__list">
+          <li><a href="/pages/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/pages/terms-of-service">Terms of Service</a></li>
+        </ul>
+      </div>
+
+      {% if section.settings.show_social %}
+        <div class="app-footer__column">
+          <h3 class="app-footer__heading">Follow Us</h3>
+          <div class="app-footer__social">
+            {% if section.settings.social_facebook != blank %}
+              <a href="{{ section.settings.social_facebook }}" target="_blank" rel="noopener">Facebook</a>
+            {% endif %}
+            {% if section.settings.social_instagram != blank %}
+              <a href="{{ section.settings.social_instagram }}" target="_blank" rel="noopener">Instagram</a>
+            {% endif %}
+            {% if section.settings.social_twitter != blank %}
+              <a href="{{ section.settings.social_twitter }}" target="_blank" rel="noopener">Twitter</a>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="app-footer__bottom">
+      <p class="app-footer__copyright">
+        &copy; {{ 'now' | date: '%Y' }} {{ section.settings.company_name }}. All rights reserved.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .app-footer {
+    background-color: var(--skin-primary);
+    color: var(--skin-secondary);
+    padding: 60px 20px 20px;
+  }
+
+  .app-footer__container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .app-footer__main {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+
+  .app-footer__heading {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: var(--skin-secondary);
+  }
+
+  .app-footer__text {
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .app-footer__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .app-footer__list li {
+    margin-bottom: 10px;
+  }
+
+  .app-footer__list a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .app-footer__list a:hover {
+    color: var(--skin-secondary);
+  }
+
+  .app-footer__social {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .app-footer__social a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .app-footer__social a:hover {
+    color: var(--skin-secondary);
+  }
+
+  .app-footer__bottom {
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+  }
+
+  .app-footer__copyright {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 768px) {
+    .app-footer__main {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "App Footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "company_name",
+      "label": "Company Name",
+      "default": "Company Name"
+    },
+    {
+      "type": "textarea",
+      "id": "company_description",
+      "label": "Company Description",
+      "default": "Your trusted partner for quality products."
+    },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Contact Email"
+    },
+    {
+      "type": "text",
+      "id": "contact_phone",
+      "label": "Contact Phone"
+    },
+    {
+      "type": "textarea",
+      "id": "contact_address",
+      "label": "Contact Address"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "label": "Show Social Links",
+      "default": false
+    },
+    {
+      "type": "url",
+      "id": "social_facebook",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "url",
+      "id": "social_instagram",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "social_twitter",
+      "label": "Twitter URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "App Footer"
+    }
+  ]
+}
+{% endschema %}

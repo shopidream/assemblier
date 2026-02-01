@@ -1,0 +1,287 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Assemblier Default Style Skin
+
+   This CSS layer sits on top of Dawn theme and provides styling
+   for all App Sections (hero, header, pdp, cta, contact, footer)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── CSS Variables ─── */
+:root {
+  /* Primary Colors */
+  --skin-primary: #1a1a1a;
+  --skin-secondary: #ffffff;
+  --skin-accent: #000000;
+
+  /* Background & Text */
+  --skin-bg: #f5f5f5;
+  --skin-text: #333333;
+  --skin-text-light: #666666;
+
+  /* Typography */
+  --skin-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --skin-font-size-base: 16px;
+
+  /* Spacing */
+  --skin-spacing-xs: 8px;
+  --skin-spacing-sm: 16px;
+  --skin-spacing-md: 24px;
+  --skin-spacing-lg: 40px;
+  --skin-spacing-xl: 60px;
+
+  /* Border Radius */
+  --skin-radius-sm: 4px;
+  --skin-radius-md: 8px;
+  --skin-radius-lg: 12px;
+
+  /* Shadows */
+  --skin-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --skin-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --skin-shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.15);
+
+  /* Transitions */
+  --skin-transition-fast: 0.2s ease;
+  --skin-transition-base: 0.3s ease;
+  --skin-transition-slow: 0.5s ease;
+}
+
+/* ─── Global Overrides ─── */
+body {
+  font-family: var(--skin-font-family);
+  font-size: var(--skin-font-size-base);
+  color: var(--skin-text);
+  line-height: 1.6;
+}
+
+/* ─── App Hero Enhancements ─── */
+.app-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.app-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+  z-index: 1;
+}
+
+.app-hero__container {
+  position: relative;
+  z-index: 2;
+}
+
+.app-hero__title {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.app-hero__subtitle {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  animation: fadeInUp 1s ease-out;
+}
+
+.app-hero__button {
+  box-shadow: var(--skin-shadow-md);
+  animation: fadeInUp 1.2s ease-out;
+}
+
+/* ─── App Header Enhancements ─── */
+.app-header {
+  box-shadow: var(--skin-shadow-sm);
+  transition: box-shadow var(--skin-transition-base);
+}
+
+.app-header:hover {
+  box-shadow: var(--skin-shadow-md);
+}
+
+.app-header__logo img {
+  transition: transform var(--skin-transition-fast);
+}
+
+.app-header__logo img:hover {
+  transform: scale(1.05);
+}
+
+/* ─── App PDP Enhancements ─── */
+.app-pdp__images img {
+  box-shadow: var(--skin-shadow-md);
+  transition: transform var(--skin-transition-base);
+}
+
+.app-pdp__images img:hover {
+  transform: scale(1.02);
+}
+
+.app-pdp__add-to-cart {
+  box-shadow: var(--skin-shadow-sm);
+  transition: all var(--skin-transition-base);
+}
+
+.app-pdp__add-to-cart:hover:not(:disabled) {
+  box-shadow: var(--skin-shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ─── App CTA Enhancements ─── */
+.app-cta {
+  position: relative;
+  overflow: hidden;
+}
+
+.app-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent);
+  z-index: 1;
+}
+
+.app-cta__container {
+  position: relative;
+  z-index: 2;
+}
+
+.app-cta__button {
+  box-shadow: var(--skin-shadow-lg);
+  transition: all var(--skin-transition-base);
+}
+
+.app-cta__button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* ─── App Contact Enhancements ─── */
+.app-contact__field input:focus,
+.app-contact__field textarea:focus {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.app-contact__submit {
+  box-shadow: var(--skin-shadow-sm);
+  transition: all var(--skin-transition-base);
+}
+
+.app-contact__submit:hover {
+  box-shadow: var(--skin-shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ─── App Footer Enhancements ─── */
+.app-footer {
+  background: linear-gradient(180deg, var(--skin-primary), #0a0a0a);
+}
+
+.app-footer__list a,
+.app-footer__social a {
+  position: relative;
+  display: inline-block;
+}
+
+.app-footer__list a::after,
+.app-footer__social a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--skin-secondary);
+  transition: width var(--skin-transition-base);
+}
+
+.app-footer__list a:hover::after,
+.app-footer__social a:hover::after {
+  width: 100%;
+}
+
+/* ─── Animations ─── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ─── Utility Classes ─── */
+.app-section-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.app-text-center {
+  text-align: center;
+}
+
+.app-text-primary {
+  color: var(--skin-primary);
+}
+
+.app-text-accent {
+  color: var(--skin-accent);
+}
+
+.app-bg-light {
+  background-color: var(--skin-bg);
+}
+
+/* ─── Responsive Utilities ─── */
+@media (max-width: 1024px) {
+  :root {
+    --skin-font-size-base: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --skin-font-size-base: 14px;
+    --skin-spacing-lg: 30px;
+    --skin-spacing-xl: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --skin-spacing-lg: 20px;
+    --skin-spacing-xl: 30px;
+  }
+}
+
+/* ─── Print Styles ─── */
+@media print {
+  .app-header,
+  .app-footer,
+  .app-cta {
+    display: none;
+  }
+
+  .app-pdp__container {
+    grid-template-columns: 1fr;
+  }
+}

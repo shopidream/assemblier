@@ -13,6 +13,7 @@ import { ShopifyService } from '../shopify/shopify.service';
 import { ShopifyAppService } from '../shopify/shopify-app.service';
 import { ShopifyThemeService } from '../shopify/shopify-theme.service';
 import { ShopifyProductService } from '../shopify/shopify-product.service';
+import { ShopifySectionService } from '../shopify/shopify-section.service';
 import { AiService } from '../ai/ai.service';
 import { GenerateStoreDto } from './dto/generate-store.dto';
 
@@ -26,6 +27,7 @@ export class StoresService {
     private shopifyAppService: ShopifyAppService,
     private shopifyThemeService: ShopifyThemeService,
     private shopifyProductService: ShopifyProductService,
+    private shopifySectionService: ShopifySectionService,
     private aiService: AiService,
   ) {}
 
@@ -85,12 +87,25 @@ export class StoresService {
     if (!shop) return;
 
     try {
+      // Determine layout type (ecommerce vs business)
+      const { layout } = await this.aiService.determineLayout({
+        brand: {
+          brandName: dto.brand.brandName,
+          targetMarket: dto.brand.targetMarket,
+        },
+        products: dto.products,
+      });
+      shop.layout = layout;
+      shop.generationProgress = 15;
+      shop.currentStep = `Layout determined: ${layout}`;
+      await this.shopRepository.save(shop);
+
       // Step 2: 소유권 이전
       await this.shopifyService.transferOwnership({
         shopId: shop.shopifyId,
         newOwnerEmail: dto.brand.email,
       });
-      shop.generationProgress = 20;
+      shop.generationProgress = 25;
       shop.currentStep = 'Ownership transferred';
       await this.shopRepository.save(shop);
 
@@ -108,25 +123,55 @@ export class StoresService {
         shopDomain: shop.shopifyDomain,
         token,
       });
-      shop.generationProgress = 60;
+      shop.generationProgress = 55;
       shop.currentStep = 'Theme installed';
       await this.shopRepository.save(shop);
 
-      // Step 5: 상품 생성
+      // Step 5: AI 상품 설명 생성 및 상품 생성
+      const productDescriptions =
+        await this.aiService.generateProductDescriptions({
+          brand: {
+            brandName: dto.brand.brandName,
+            language: dto.brand.language,
+          },
+          products: dto.products,
+        });
+
+      // Create products with AI-generated descriptions
+      const productsWithDescriptions = dto.products.map((product) => {
+        const description = productDescriptions.find(
+          (desc) => desc.productName === product.name,
+        );
+        return {
+          ...product,
+          description: description?.description || '',
+        };
+      });
+
       await this.shopifyProductService.createProducts({
         shopDomain: shop.shopifyDomain,
         token,
-        products: dto.products,
+        products: productsWithDescriptions,
       });
-      shop.generationProgress = 80;
+      shop.generationProgress = 70;
       shop.currentStep = 'Products created';
       await this.shopRepository.save(shop);
 
       // Step 6: AI 콘텐츠 생성 및 페이지 배포
-      const content = await this.aiService.generateStoreContent({
-        brand: dto.brand,
-        products: dto.products,
-      });
+      const [content, marketingCopy] = await Promise.all([
+        this.aiService.generateStoreContent({
+          brand: dto.brand,
+          products: dto.products,
+        }),
+        this.aiService.generateMarketingCopy({
+          brand: {
+            brandName: dto.brand.brandName,
+            targetMarket: dto.brand.targetMarket,
+            language: dto.brand.language,
+          },
+          layout,
+        }),
+      ]);
 
       await this.shopifyProductService.createPages({
         shopDomain: shop.shopifyDomain,
@@ -134,12 +179,12 @@ export class StoresService {
         pages: [
           {
             title: content.aboutPage.title,
-            handle: 'about',
+            handle: 'about-us',
             body: content.aboutPage.body,
           },
           {
             title: content.contactPage.title,
-            handle: 'contact',
+            handle: 'contact-us',
             body: content.contactPage.body,
           },
           {
@@ -153,6 +198,24 @@ export class StoresService {
             body: content.termsOfService.body,
           },
         ],
+      });
+
+      shop.generationProgress = 85;
+      shop.currentStep = 'Pages created';
+      await this.shopRepository.save(shop);
+
+      // Step 7: App Section 배포
+      await this.shopifySectionService.deploySections({
+        shopDomain: shop.shopifyDomain,
+        token,
+        layout,
+        marketingCopy,
+        brandInfo: {
+          companyName: dto.brand.companyName,
+          email: dto.brand.email,
+          phone: dto.brand.phone,
+          address: dto.brand.address,
+        },
       });
 
       shop.generationStep = GenerationStep.COMPLETED;

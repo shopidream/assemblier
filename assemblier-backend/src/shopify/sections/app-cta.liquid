@@ -1,0 +1,118 @@
+{% comment %}
+  App CTA (Call to Action) Section
+  Displays marketing message with action button
+{% endcomment %}
+
+<section class="app-cta" id="app-cta-{{ section.id }}">
+  <div class="app-cta__container">
+    <div class="app-cta__content">
+      <h2 class="app-cta__title">{{ section.settings.cta_title }}</h2>
+      <p class="app-cta__text">{{ section.settings.cta_text }}</p>
+      <a href="{{ section.settings.cta_button_link }}" class="app-cta__button">
+        {{ section.settings.cta_button_label }}
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .app-cta {
+    background-color: {{ section.settings.cta_bg_color }};
+    padding: 80px 20px;
+    text-align: center;
+  }
+
+  .app-cta__container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .app-cta__title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: {{ section.settings.cta_text_color }};
+  }
+
+  .app-cta__text {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: {{ section.settings.cta_text_color }};
+    line-height: 1.6;
+  }
+
+  .app-cta__button {
+    display: inline-block;
+    padding: 15px 40px;
+    background-color: var(--skin-accent);
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: opacity 0.3s;
+  }
+
+  .app-cta__button:hover {
+    opacity: 0.9;
+  }
+
+  @media (max-width: 768px) {
+    .app-cta__title {
+      font-size: 2rem;
+    }
+
+    .app-cta__text {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "App CTA",
+  "settings": [
+    {
+      "type": "text",
+      "id": "cta_title",
+      "label": "CTA Title",
+      "default": "Ready to Get Started?"
+    },
+    {
+      "type": "textarea",
+      "id": "cta_text",
+      "label": "CTA Text",
+      "default": "Join thousands of satisfied customers today."
+    },
+    {
+      "type": "text",
+      "id": "cta_button_label",
+      "label": "Button Label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "cta_button_link",
+      "label": "Button Link",
+      "default": "/collections/all"
+    },
+    {
+      "type": "color",
+      "id": "cta_bg_color",
+      "label": "Background Color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "cta_text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "App CTA"
+    }
+  ]
+}
+{% endschema %}

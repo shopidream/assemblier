@@ -53,6 +53,9 @@ export class Shop {
   @Column({ type: 'text', nullable: true })
   currentStep: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  layout: string; // 'ecommerce' | 'business'
+
   @CreateDateColumn()
   createdAt: Date;
 

@@ -1,0 +1,171 @@
+{% comment %}
+  App Product Detail Page Section
+  Displays product information, options, and add to cart button
+{% endcomment %}
+
+<section class="app-pdp" id="app-pdp-{{ section.id }}">
+  <div class="app-pdp__container">
+    {% if product %}
+      <div class="app-pdp__images">
+        {% if product.featured_image %}
+          <img src="{{ product.featured_image | img_url: '600x' }}" alt="{{ product.title }}">
+        {% else %}
+          <div class="app-pdp__placeholder">No image available</div>
+        {% endif %}
+      </div>
+
+      <div class="app-pdp__info">
+        <h1 class="app-pdp__title">{{ product.title }}</h1>
+
+        <div class="app-pdp__price">
+          {{ product.price | money }}
+        </div>
+
+        <div class="app-pdp__description">
+          {{ product.description }}
+        </div>
+
+        <form action="/cart/add" method="post" class="app-pdp__form">
+          {% if product.variants.size > 1 %}
+            <div class="app-pdp__variants">
+              <label for="variant-select">Options</label>
+              <select name="id" id="variant-select" class="app-pdp__select">
+                {% for variant in product.variants %}
+                  <option value="{{ variant.id }}" {% if variant.available == false %}disabled{% endif %}>
+                    {{ variant.title }} - {{ variant.price | money }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          {% else %}
+            <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+          {% endif %}
+
+          <div class="app-pdp__quantity">
+            <label for="quantity">Quantity</label>
+            <input type="number" name="quantity" id="quantity" value="1" min="1" class="app-pdp__quantity-input">
+          </div>
+
+          <button type="submit" class="app-pdp__add-to-cart" {% if product.available == false %}disabled{% endif %}>
+            {% if product.available %}
+              Add to Cart
+            {% else %}
+              Sold Out
+            {% endif %}
+          </button>
+        </form>
+      </div>
+    {% else %}
+      <p>Product not found</p>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .app-pdp__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+  }
+
+  .app-pdp__images img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+
+  .app-pdp__placeholder {
+    width: 100%;
+    aspect-ratio: 1;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: #999;
+  }
+
+  .app-pdp__title {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    color: var(--skin-primary);
+  }
+
+  .app-pdp__price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--skin-accent);
+    margin-bottom: 20px;
+  }
+
+  .app-pdp__description {
+    margin-bottom: 30px;
+    line-height: 1.6;
+    color: var(--skin-text);
+  }
+
+  .app-pdp__form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .app-pdp__select,
+  .app-pdp__quantity-input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  .app-pdp__quantity-input {
+    width: 100px;
+  }
+
+  .app-pdp__add-to-cart {
+    padding: 15px 30px;
+    background-color: var(--skin-accent);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.3s;
+  }
+
+  .app-pdp__add-to-cart:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  .app-pdp__add-to-cart:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    .app-pdp__container {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    .app-pdp__title {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "App Product Detail",
+  "settings": [],
+  "presets": [
+    {
+      "name": "App Product Detail"
+    }
+  ]
+}
+{% endschema %}

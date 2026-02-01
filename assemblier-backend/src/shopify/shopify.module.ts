@@ -4,6 +4,7 @@ import { ShopifyService } from './shopify.service';
 import { ShopifyAppService } from './shopify-app.service';
 import { ShopifyThemeService } from './shopify-theme.service';
 import { ShopifyProductService } from './shopify-product.service';
+import { ShopifySectionService } from './shopify-section.service';
 
 @Module({
   imports: [HttpModule],
@@ -12,12 +13,14 @@ import { ShopifyProductService } from './shopify-product.service';
     ShopifyAppService,
     ShopifyThemeService,
     ShopifyProductService,
+    ShopifySectionService,
   ],
   exports: [
     ShopifyService,
     ShopifyAppService,
     ShopifyThemeService,
     ShopifyProductService,
+    ShopifySectionService,
   ],
 })
 export class ShopifyModule {}
