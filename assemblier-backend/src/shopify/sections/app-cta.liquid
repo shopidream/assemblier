@@ -1,9 +1,10 @@
 {% comment %}
   App CTA (Call to Action) Section
   Displays marketing message with action button
+  License check: Hides button on EXPIRED
 {% endcomment %}
 
-<section class="app-cta" id="app-cta-{{ section.id }}">
+<section class="app-cta" id="app-cta-{{ section.id }}" data-section-type="app-cta">
   <div class="app-cta__container">
     <div class="app-cta__content">
       <h2 class="app-cta__title">{{ section.settings.cta_title }}</h2>
@@ -68,6 +69,30 @@
   }
 </style>
 
+<script>
+  (function() {
+    const section = document.getElementById('app-cta-{{ section.id }}');
+    const apiUrl = '{{ section.settings.license_api_url | default: "https://assemblier-backend.onrender.com" }}';
+    const shopDomain = window.Shopify ? window.Shopify.shop : '{{ shop.domain }}';
+
+    // Check license status
+    fetch(apiUrl + '/license/status?shopDomain=' + shopDomain)
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'EXPIRED') {
+          // Hide CTA button on expired
+          section.classList.add('app-cta--expired');
+          const button = section.querySelector('.app-cta__button');
+          if (button) button.style.display = 'none';
+        }
+      })
+      .catch(error => {
+        console.error('License check failed:', error);
+        // Fail open: continue showing section normally
+      });
+  })();
+</script>
+
 {% schema %}
 {
   "name": "App CTA",
@@ -107,6 +132,12 @@
       "id": "cta_text_color",
       "label": "Text Color",
       "default": "#ffffff"
+    },
+    {
+      "type": "text",
+      "id": "license_api_url",
+      "label": "License API URL",
+      "default": "https://assemblier-backend.onrender.com"
     }
   ],
   "presets": [

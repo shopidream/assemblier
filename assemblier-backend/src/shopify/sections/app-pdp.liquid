@@ -1,9 +1,10 @@
 {% comment %}
   App Product Detail Page Section
   Displays product information, options, and add to cart button
+  License check: For ecommerce layout, hides price/options/cart on EXPIRED
 {% endcomment %}
 
-<section class="app-pdp" id="app-pdp-{{ section.id }}">
+<section class="app-pdp" id="app-pdp-{{ section.id }}" data-section-type="app-pdp">
   <div class="app-pdp__container">
     {% if product %}
       <div class="app-pdp__images">
@@ -158,10 +159,48 @@
   }
 </style>
 
+<script>
+  (function() {
+    const section = document.getElementById('app-pdp-{{ section.id }}');
+    const apiUrl = '{{ section.settings.license_api_url | default: "https://assemblier-backend.onrender.com" }}';
+    const shopDomain = window.Shopify ? window.Shopify.shop : '{{ shop.domain }}';
+
+    // Check license status
+    fetch(apiUrl + '/license/status?shopDomain=' + shopDomain)
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'EXPIRED' && data.layout === 'ecommerce') {
+          // Hide price, options, and add to cart button for ecommerce layout
+          section.classList.add('app-pdp--expired');
+          const price = section.querySelector('.app-pdp__price');
+          const variants = section.querySelector('.app-pdp__variants');
+          const quantity = section.querySelector('.app-pdp__quantity');
+          const button = section.querySelector('.app-pdp__add-to-cart');
+
+          if (price) price.style.display = 'none';
+          if (variants) variants.style.display = 'none';
+          if (quantity) quantity.style.display = 'none';
+          if (button) button.style.display = 'none';
+        }
+      })
+      .catch(error => {
+        console.error('License check failed:', error);
+        // Fail open: continue showing section normally
+      });
+  })();
+</script>
+
 {% schema %}
 {
   "name": "App Product Detail",
-  "settings": [],
+  "settings": [
+    {
+      "type": "text",
+      "id": "license_api_url",
+      "label": "License API URL",
+      "default": "https://assemblier-backend.onrender.com"
+    }
+  ],
   "presets": [
     {
       "name": "App Product Detail"

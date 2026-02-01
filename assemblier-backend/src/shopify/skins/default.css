@@ -251,6 +251,46 @@ body {
   background-color: var(--skin-bg);
 }
 
+/* ─── License Expiry / Disabling Styles ─── */
+/* These styles are applied when subscription expires */
+
+.app-hero--expired {
+  position: relative;
+}
+
+.app-hero--expired .app-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.app-hero--expired .app-hero__button {
+  display: none !important;
+}
+
+.app-pdp--expired .app-pdp__price,
+.app-pdp--expired .app-pdp__variants,
+.app-pdp--expired .app-pdp__quantity,
+.app-pdp--expired .app-pdp__add-to-cart {
+  display: none !important;
+}
+
+.app-contact--expired .app-contact__form--disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.app-contact--expired .app-contact__submit {
+  display: none !important;
+}
+
+.app-cta--expired .app-cta__button {
+  display: none !important;
+}
+
 /* ─── Responsive Utilities ─── */
 @media (max-width: 1024px) {
   :root {

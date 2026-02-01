@@ -1,9 +1,10 @@
 {% comment %}
   App Contact Section
   Displays contact form
+  License check: For business layout, disables form on EXPIRED
 {% endcomment %}
 
-<section class="app-contact" id="app-contact-{{ section.id }}">
+<section class="app-contact" id="app-contact-{{ section.id }}" data-section-type="app-contact">
   <div class="app-contact__container">
     <h2 class="app-contact__title">{{ section.settings.contact_title }}</h2>
     <p class="app-contact__description">{{ section.settings.contact_description }}</p>
@@ -145,6 +146,35 @@
   }
 </style>
 
+<script>
+  (function() {
+    const section = document.getElementById('app-contact-{{ section.id }}');
+    const apiUrl = '{{ section.settings.license_api_url | default: "https://assemblier-backend.onrender.com" }}';
+    const shopDomain = window.Shopify ? window.Shopify.shop : '{{ shop.domain }}';
+
+    // Check license status
+    fetch(apiUrl + '/license/status?shopDomain=' + shopDomain)
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'EXPIRED' && data.layout === 'business') {
+          // Disable form for business layout
+          section.classList.add('app-contact--expired');
+          const form = section.querySelector('.app-contact__form');
+          const inputs = section.querySelectorAll('input, textarea');
+          const button = section.querySelector('.app-contact__submit');
+
+          if (form) form.classList.add('app-contact__form--disabled');
+          inputs.forEach(input => input.disabled = true);
+          if (button) button.style.display = 'none';
+        }
+      })
+      .catch(error => {
+        console.error('License check failed:', error);
+        // Fail open: continue showing section normally
+      });
+  })();
+</script>
+
 {% schema %}
 {
   "name": "App Contact",
@@ -160,6 +190,12 @@
       "id": "contact_description",
       "label": "Contact Description",
       "default": "Have a question? We'd love to hear from you."
+    },
+    {
+      "type": "text",
+      "id": "license_api_url",
+      "label": "License API URL",
+      "default": "https://assemblier-backend.onrender.com"
     }
   ],
   "presets": [

@@ -1,9 +1,11 @@
 {% comment %}
   App Hero Section
   Displays hero banner with brand name, marketing copy, and CTA button
+  License check: For business layout, disables on EXPIRED
 {% endcomment %}
 
-<section class="app-hero" id="app-hero-{{ section.id }}">
+<section class="app-hero" id="app-hero-{{ section.id }}" data-section-type="app-hero">
+  <div class="app-hero__overlay" style="display: none;"></div>
   <div class="app-hero__container">
     <div class="app-hero__content">
       <h1 class="app-hero__title">{{ section.settings.hero_title }}</h1>
@@ -16,6 +18,32 @@
     </div>
   </div>
 </section>
+
+<script>
+  (function() {
+    const section = document.getElementById('app-hero-{{ section.id }}');
+    const apiUrl = '{{ section.settings.license_api_url | default: "https://assemblier-backend.onrender.com" }}';
+    const shopDomain = window.Shopify ? window.Shopify.shop : '{{ shop.domain }}';
+
+    // Check license status
+    fetch(apiUrl + '/license/status?shopDomain=' + shopDomain)
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'EXPIRED' && data.layout === 'business') {
+          // Apply expired styling for business layout
+          section.classList.add('app-hero--expired');
+          const overlay = section.querySelector('.app-hero__overlay');
+          const button = section.querySelector('.app-hero__button');
+          if (overlay) overlay.style.display = 'block';
+          if (button) button.style.display = 'none';
+        }
+      })
+      .catch(error => {
+        console.error('License check failed:', error);
+        // Fail open: continue showing section normally
+      });
+  })();
+</script>
 
 <style>
   .app-hero {
@@ -119,6 +147,12 @@
       "type": "image_picker",
       "id": "hero_bg_image",
       "label": "Background Image"
+    },
+    {
+      "type": "text",
+      "id": "license_api_url",
+      "label": "License API URL",
+      "default": "https://assemblier-backend.onrender.com"
     }
   ],
   "presets": [

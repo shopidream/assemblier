@@ -70,6 +70,61 @@ export default function DashboardPage() {
     );
   }
 
+  // Determine banner to show based on subscription status
+  const getBanner = () => {
+    if (!subscription) return null;
+
+    const now = new Date();
+    const periodEnd = new Date(subscription.currentPeriodEnd);
+
+    switch (subscription.status) {
+      case 'PAST_DUE':
+        return (
+          <div className="mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded">
+            <strong>⚠ Payment Failed</strong>
+            <p>Your payment method could not be charged. Please update your payment method to avoid service interruption.</p>
+          </div>
+        );
+
+      case 'CANCELED':
+        return (
+          <div className="mb-6 p-4 bg-blue-100 border border-blue-400 text-blue-800 rounded">
+            <strong>ℹ Subscription Canceled</strong>
+            <p>Your subscription will end on {periodEnd.toLocaleDateString()}. You can continue using the service until then.</p>
+          </div>
+        );
+
+      default:
+        // Check if subscription is expired (period ended)
+        if (now > periodEnd) {
+          return (
+            <div className="mb-6 p-6 bg-red-600 text-white rounded-lg shadow-lg">
+              <h2 className="text-2xl font-bold mb-2">🚫 Subscription Expired</h2>
+              <p className="mb-4">
+                Your subscription has expired. Your store features are currently limited.
+                Resubscribe to restore full functionality.
+              </p>
+              <div className="space-x-4">
+                <button
+                  onClick={() => handleCreateSubscription('STARTER')}
+                  className="px-6 py-3 bg-white text-red-600 font-bold rounded hover:bg-gray-100"
+                >
+                  Resubscribe to Starter
+                </button>
+                <button
+                  onClick={() => handleCreateSubscription('PRO')}
+                  className="px-6 py-3 bg-white text-red-600 font-bold rounded hover:bg-gray-100"
+                >
+                  Resubscribe to Pro
+                </button>
+              </div>
+            </div>
+          );
+        }
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-4xl mx-auto">
@@ -87,6 +142,9 @@ export default function DashboardPage() {
             </button>
           </div>
         </div>
+
+        {/* Subscription Status Banner */}
+        {getBanner()}
 
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-bold mb-4">Subscription Status</h2>

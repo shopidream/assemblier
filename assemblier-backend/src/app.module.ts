@@ -9,6 +9,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
 import { ShopifyModule } from './shopify/shopify.module';
 import { StoresModule } from './stores/stores.module';
 import { AiModule } from './ai/ai.module';
+import { LicenseModule } from './license/license.module';
 import { User } from './users/entities/user.entity';
 import { Shop } from './shops/entities/shop.entity';
 import { Subscription } from './subscription/entities/subscription.entity';
@@ -42,6 +43,7 @@ import { Subscription } from './subscription/entities/subscription.entity';
     ShopifyModule,
     StoresModule,
     AiModule,
+    LicenseModule,
   ],
 })
 export class AppModule {}
