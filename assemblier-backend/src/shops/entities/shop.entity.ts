@@ -14,6 +14,12 @@ export enum ShopStatus {
   SUSPENDED = 'SUSPENDED',
 }
 
+export enum GenerationStep {
+  GENERATING = 'GENERATING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+}
+
 @Entity('shops')
 export class Shop {
   @PrimaryGeneratedColumn('uuid')
@@ -27,6 +33,25 @@ export class Shop {
 
   @Column({ type: 'enum', enum: ShopStatus, default: ShopStatus.ACTIVE })
   status: ShopStatus;
+
+  @Column({ type: 'text', nullable: true })
+  adminToken: string;
+
+  @Column({
+    type: 'enum',
+    enum: GenerationStep,
+    default: GenerationStep.GENERATING,
+  })
+  generationStep: GenerationStep;
+
+  @Column({ type: 'int', default: 0 })
+  generationProgress: number;
+
+  @Column({ type: 'text', nullable: true })
+  generationError: string;
+
+  @Column({ type: 'text', nullable: true })
+  currentStep: string;
 
   @CreateDateColumn()
   createdAt: Date;
