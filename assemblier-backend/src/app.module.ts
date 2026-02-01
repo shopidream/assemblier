@@ -2,6 +2,14 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HealthModule } from './health/health.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { StripeModule } from './stripe/stripe.module';
+import { SubscriptionModule } from './subscription/subscription.module';
+import { ShopifyModule } from './shopify/shopify.module';
+import { User } from './users/entities/user.entity';
+import { Shop } from './shops/entities/shop.entity';
+import { Subscription } from './subscription/entities/subscription.entity';
 
 @Module({
   imports: [
@@ -18,13 +26,18 @@ import { HealthModule } from './health/health.module';
         ssl: configService.get('DATABASE_SSL') !== 'false'
           ? { rejectUnauthorized: false }
           : false,
-        entities: [__dirname + '/**/entities/*.entity{.ts,.js}'],
+        entities: [User, Shop, Subscription],
         synchronize: false,
         logging: false,
       }),
       inject: [ConfigService],
     }),
     HealthModule,
+    AuthModule,
+    UsersModule,
+    StripeModule,
+    SubscriptionModule,
+    ShopifyModule,
   ],
 })
 export class AppModule {}
