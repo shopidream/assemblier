@@ -1,0 +1,4 @@
+{
+  "$schema": "https://docs.nestjs.com/cli/options",
+  "sourceRoot": "src"
+}
