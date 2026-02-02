@@ -65,6 +65,9 @@ export class Shop {
   @Column({ nullable: true })
   targetMarket: string; // e.g., 'KR', 'US', 'JP'
 
+  @Column({ nullable: true })
+  weightUnit: string; // 'lb' | 'kg'
+
   @CreateDateColumn()
   createdAt: Date;
 

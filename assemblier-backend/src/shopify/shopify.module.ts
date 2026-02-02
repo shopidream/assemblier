@@ -6,6 +6,7 @@ import { ShopifyThemeService } from './shopify-theme.service';
 import { ShopifyProductService } from './shopify-product.service';
 import { ShopifySectionService } from './shopify-section.service';
 import { ShopifyStoreService } from './shopify-store.service';
+import { ShopifyNavigationService } from './shopify-navigation.service';
 
 @Module({
   imports: [HttpModule],
@@ -16,6 +17,7 @@ import { ShopifyStoreService } from './shopify-store.service';
     ShopifyProductService,
     ShopifySectionService,
     ShopifyStoreService,
+    ShopifyNavigationService,
   ],
   exports: [
     ShopifyService,
@@ -24,6 +26,7 @@ import { ShopifyStoreService } from './shopify-store.service';
     ShopifyProductService,
     ShopifySectionService,
     ShopifyStoreService,
+    ShopifyNavigationService,
   ],
 })
 export class ShopifyModule {}

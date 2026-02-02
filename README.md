@@ -1310,14 +1310,3 @@ GitHub main에 푸시한다.
 중간에 확인 질문을 하지 않는다. 그냥 진행한다.
 
 
-
-## 쇼피파이 키
-
-Client ID
-your_shopify_client_id_here
-
-Secret
-shpss_your_shopify_client_secret_here
-
-## Openai 키
-sk-proj-your_openai_api_key_here

@@ -15,6 +15,7 @@ import { ShopifyThemeService } from '../shopify/shopify-theme.service';
 import { ShopifyProductService } from '../shopify/shopify-product.service';
 import { ShopifySectionService } from '../shopify/shopify-section.service';
 import { ShopifyStoreService } from '../shopify/shopify-store.service';
+import { ShopifyNavigationService } from '../shopify/shopify-navigation.service';
 import { AiService } from '../ai/ai.service';
 import { GenerateStoreDto } from './dto/generate-store.dto';
 import { generateShopName } from './shop-name.util';
@@ -32,6 +33,7 @@ export class StoresService {
     private shopifyProductService: ShopifyProductService,
     private shopifySectionService: ShopifySectionService,
     private shopifyStoreService: ShopifyStoreService,
+    private shopifyNavigationService: ShopifyNavigationService,
     private aiService: AiService,
   ) {}
 
@@ -68,6 +70,7 @@ export class StoresService {
       language: dto.brand.language,
       currency: dto.brand.currency,
       targetMarket: dto.brand.targetMarket,
+      weightUnit: dto.brand.weightUnit,
       generationStep: GenerationStep.GENERATING,
       generationProgress: 10,
       currentStep: 'Store created',
@@ -129,8 +132,6 @@ export class StoresService {
         products: dto.products,
       });
       shop.layout = layout;
-      shop.generationProgress = 15;
-      shop.currentStep = `Layout determined: ${layout}`;
       await this.shopRepository.save(shop);
 
       // Step 2: 소유권 이전
@@ -138,7 +139,7 @@ export class StoresService {
         shopId: shop.shopifyId,
         newOwnerEmail: dto.brand.email,
       });
-      shop.generationProgress = 20;
+      shop.generationProgress = 18;
       shop.currentStep = 'Ownership transferred';
       await this.shopRepository.save(shop);
 
@@ -147,7 +148,7 @@ export class StoresService {
         shopDomain: shop.shopifyDomain,
       });
       shop.adminToken = token;
-      shop.generationProgress = 35;
+      shop.generationProgress = 30;
       shop.currentStep = 'App installed';
       await this.shopRepository.save(shop);
 
@@ -156,20 +157,21 @@ export class StoresService {
         shopDomain: shop.shopifyDomain,
         token,
       });
-      shop.generationProgress = 45;
+      shop.generationProgress = 40;
       shop.currentStep = 'Theme installed';
       await this.shopRepository.save(shop);
 
-      // Step 4.5: 스토어 언어 및 통화 설정
+      // Step 4.5: 스토어 언어, 통화 및 무게 단위 설정
       const shopifyLocale = toShopifyLocale(dto.brand.language);
       await this.shopifyStoreService.configureStore({
         shopDomain: shop.shopifyDomain,
         token,
         language: shopifyLocale,
         currency: dto.brand.currency,
+        weightUnit: dto.brand.weightUnit,
       });
-      shop.generationProgress = 50;
-      shop.currentStep = 'Store configured (language & currency)';
+      shop.generationProgress = 48;
+      shop.currentStep = 'Store configured';
       await this.shopRepository.save(shop);
 
       // Step 5: AI 상품 설명 생성 및 상품 생성
@@ -198,7 +200,7 @@ export class StoresService {
         token,
         products: productsWithDescriptions,
       });
-      shop.generationProgress = 70;
+      shop.generationProgress = 60;
       shop.currentStep = 'Products created';
       await this.shopRepository.save(shop);
 
@@ -245,7 +247,7 @@ export class StoresService {
         ],
       });
 
-      shop.generationProgress = 85;
+      shop.generationProgress = 72;
       shop.currentStep = 'Pages created';
       await this.shopRepository.save(shop);
 
@@ -261,6 +263,17 @@ export class StoresService {
           phone: dto.brand.phone,
           address: dto.brand.address,
         },
+      });
+
+      shop.generationProgress = 88;
+      shop.currentStep = 'Sections deployed';
+      await this.shopRepository.save(shop);
+
+      // Step 8: 네비게이션 메뉴 생성
+      await this.shopifyNavigationService.createNavigation({
+        shopDomain: shop.shopifyDomain,
+        token,
+        layout,
       });
 
       shop.generationStep = GenerationStep.COMPLETED;

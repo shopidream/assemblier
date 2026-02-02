@@ -11,6 +11,7 @@ export default function CreatePage() {
   const [step, setStep] = useState(1);
   const [generating, setGenerating] = useState(false);
   const [shopId, setShopId] = useState('');
+  const [shopDomain, setShopDomain] = useState('');
   const [progress, setProgress] = useState(0);
   const [currentStepText, setCurrentStepText] = useState('');
   const [error, setError] = useState('');
@@ -25,6 +26,7 @@ export default function CreatePage() {
     targetMarket: 'US',
     language: 'en',
     currency: 'USD',
+    weightUnit: 'lb',
   });
 
   const [products, setProducts] = useState([
@@ -113,6 +115,7 @@ export default function CreatePage() {
         const status = await getStoreStatus(id);
         setProgress(status.progress);
         setCurrentStepText(status.currentStep);
+        setShopDomain(status.shopDomain);
 
         if (status.status === 'COMPLETED') {
           clearInterval(interval);
@@ -303,6 +306,22 @@ export default function CreatePage() {
                     <option value="GBP">GBP</option>
                   </select>
                 </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Weight Unit
+                  </label>
+                  <select
+                    value={brand.weightUnit}
+                    onChange={(e) =>
+                      setBrand({ ...brand, weightUnit: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border rounded"
+                  >
+                    <option value="lb">Pounds (lb)</option>
+                    <option value="kg">Kilograms (kg)</option>
+                  </select>
+                </div>
               </div>
             </div>
           )}
@@ -431,9 +450,21 @@ export default function CreatePage() {
                 </div>
               )}
 
-              {progress === 100 && (
-                <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
-                  Store generated successfully!
+              {progress === 100 && shopDomain && (
+                <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+                  <h3 className="font-semibold mb-2">Store Generated Successfully!</h3>
+                  <p className="mb-2">Your store is ready at:</p>
+                  <p className="mb-3 font-mono text-sm break-all">
+                    https://{shopDomain}
+                  </p>
+                  <a
+                    href={`https://${shopDomain}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                  >
+                    Open Store
+                  </a>
                 </div>
               )}
             </div>

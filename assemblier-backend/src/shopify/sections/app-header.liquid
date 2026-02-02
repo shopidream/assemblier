@@ -19,12 +19,10 @@
 
     <nav class="app-header__nav">
       <ul class="app-header__nav-list">
-        <li><a href="/">Home</a></li>
-        {% if section.settings.show_collections %}
-          <li><a href="/collections/all">Collections</a></li>
-        {% endif %}
-        <li><a href="/pages/about-us">About</a></li>
-        <li><a href="/pages/contact-us">Contact</a></li>
+        {% assign main_menu = linklists['main-menu'] %}
+        {% for link in main_menu.links %}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {% endfor %}
       </ul>
     </nav>
 
@@ -155,12 +153,6 @@
       "id": "logo_text",
       "label": "Logo Text (if no image)",
       "default": "Store Name"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_collections",
-      "label": "Show Collections Link",
-      "default": true
     }
   ],
   "presets": [

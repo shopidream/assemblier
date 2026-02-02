@@ -94,6 +94,21 @@ export class ShopifySectionService {
       console.error('Failed to deploy style skin:', error.message);
     }
 
+    // Deploy index.liquid template
+    try {
+      const templateContent = this.readTemplateFile(layout);
+      await this.uploadAsset(
+        shopDomain,
+        token,
+        themeId,
+        'templates/index.liquid',
+        templateContent,
+      );
+      deployedSections.push('index.liquid');
+    } catch (error) {
+      console.error('Failed to deploy index template:', error.message);
+    }
+
     return { deployedSections };
   }
 
@@ -171,6 +186,12 @@ export class ShopifySectionService {
 
   private readSkinFile(skinName: string): string {
     const filePath = path.join(__dirname, 'skins', `${skinName}.css`);
+    return fs.readFileSync(filePath, 'utf-8');
+  }
+
+  private readTemplateFile(layout: 'ecommerce' | 'business'): string {
+    const templateName = `index-${layout}.liquid`;
+    const filePath = path.join(__dirname, 'templates', templateName);
     return fs.readFileSync(filePath, 'utf-8');
   }
 

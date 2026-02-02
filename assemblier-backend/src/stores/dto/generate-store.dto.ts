@@ -8,6 +8,7 @@ export class GenerateStoreDto {
     targetMarket: string;
     language: string;
     currency: string;
+    weightUnit: string;
   };
 
   products: Array<{

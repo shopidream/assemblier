@@ -7,8 +7,8 @@ export class ShopifyStoreService {
   constructor(private httpService: HttpService) {}
 
   /**
-   * Configure store language and currency settings
-   * Uses Shopify Admin API to set primary_locale and currency
+   * Configure store language, currency, and weight unit settings
+   * Uses Shopify Admin API to set primary_locale, currency, and weight_unit
    *
    * @param params - Configuration parameters
    * @returns Success status
@@ -18,8 +18,9 @@ export class ShopifyStoreService {
     token: string;
     language: string;
     currency: string;
+    weightUnit: string;
   }): Promise<{ configured: boolean }> {
-    const { shopDomain, token, language, currency } = params;
+    const { shopDomain, token, language, currency, weightUnit } = params;
 
     try {
       await firstValueFrom(
@@ -29,6 +30,7 @@ export class ShopifyStoreService {
             shop: {
               primary_locale: language,
               currency: currency,
+              weight_unit: weightUnit,
             },
           },
           {
