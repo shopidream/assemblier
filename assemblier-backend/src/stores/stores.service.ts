@@ -14,8 +14,11 @@ import { ShopifyAppService } from '../shopify/shopify-app.service';
 import { ShopifyThemeService } from '../shopify/shopify-theme.service';
 import { ShopifyProductService } from '../shopify/shopify-product.service';
 import { ShopifySectionService } from '../shopify/shopify-section.service';
+import { ShopifyStoreService } from '../shopify/shopify-store.service';
 import { AiService } from '../ai/ai.service';
 import { GenerateStoreDto } from './dto/generate-store.dto';
+import { generateShopName } from './shop-name.util';
+import { toShopifyLocale } from './locale.util';
 
 @Injectable()
 export class StoresService {
@@ -28,6 +31,7 @@ export class StoresService {
     private shopifyThemeService: ShopifyThemeService,
     private shopifyProductService: ShopifyProductService,
     private shopifySectionService: ShopifySectionService,
+    private shopifyStoreService: ShopifyStoreService,
     private aiService: AiService,
   ) {}
 
@@ -49,17 +53,21 @@ export class StoresService {
       throw new ConflictException('User already has a store');
     }
 
-    // Step 1: Shopify 스토어 생성
-    const { shopId, shopDomain } = await this.shopifyService.createShop({
-      shopName: dto.brand.brandName,
-      email: dto.brand.email,
-    });
+    // Step 1: Generate clean shop name and create Shopify store
+    const cleanName = generateShopName(dto.brand.brandName);
+    const { shopId, shopDomain } = await this.createShopWithRetry(
+      cleanName,
+      dto.brand.email,
+    );
 
-    // Shop 레코드 생성
+    // Shop 레코드 생성 (로컬화 필드 포함)
     const shop = this.shopRepository.create({
       shopifyId: shopId,
       shopifyDomain: shopDomain,
       userId: user.id,
+      language: dto.brand.language,
+      currency: dto.brand.currency,
+      targetMarket: dto.brand.targetMarket,
       generationStep: GenerationStep.GENERATING,
       generationProgress: 10,
       currentStep: 'Store created',
@@ -77,6 +85,31 @@ export class StoresService {
       shopDomain,
       status: 'GENERATING',
     };
+  }
+
+  private async createShopWithRetry(
+    baseName: string,
+    email: string,
+  ): Promise<{ shopId: string; shopDomain: string }> {
+    let name = baseName;
+    for (let i = 0; i < 3; i++) {
+      try {
+        return await this.shopifyService.createShop({
+          shopName: name,
+          email,
+        });
+      } catch (e: any) {
+        // If conflict (409) and we have retries left, append random number
+        if (e.response?.status === 409 && i < 2) {
+          const randomNum = Math.floor(Math.random() * 900) + 100; // 3-digit number
+          name = baseName + randomNum;
+          continue;
+        }
+        throw e;
+      }
+    }
+    // This shouldn't be reached, but TypeScript needs it
+    throw new Error('Failed to create shop after 3 attempts');
   }
 
   private async continueGeneration(
@@ -105,7 +138,7 @@ export class StoresService {
         shopId: shop.shopifyId,
         newOwnerEmail: dto.brand.email,
       });
-      shop.generationProgress = 25;
+      shop.generationProgress = 20;
       shop.currentStep = 'Ownership transferred';
       await this.shopRepository.save(shop);
 
@@ -114,7 +147,7 @@ export class StoresService {
         shopDomain: shop.shopifyDomain,
       });
       shop.adminToken = token;
-      shop.generationProgress = 40;
+      shop.generationProgress = 35;
       shop.currentStep = 'App installed';
       await this.shopRepository.save(shop);
 
@@ -123,8 +156,20 @@ export class StoresService {
         shopDomain: shop.shopifyDomain,
         token,
       });
-      shop.generationProgress = 55;
+      shop.generationProgress = 45;
       shop.currentStep = 'Theme installed';
+      await this.shopRepository.save(shop);
+
+      // Step 4.5: 스토어 언어 및 통화 설정
+      const shopifyLocale = toShopifyLocale(dto.brand.language);
+      await this.shopifyStoreService.configureStore({
+        shopDomain: shop.shopifyDomain,
+        token,
+        language: shopifyLocale,
+        currency: dto.brand.currency,
+      });
+      shop.generationProgress = 50;
+      shop.currentStep = 'Store configured (language & currency)';
       await this.shopRepository.save(shop);
 
       // Step 5: AI 상품 설명 생성 및 상품 생성

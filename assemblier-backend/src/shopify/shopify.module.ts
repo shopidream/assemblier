@@ -5,6 +5,7 @@ import { ShopifyAppService } from './shopify-app.service';
 import { ShopifyThemeService } from './shopify-theme.service';
 import { ShopifyProductService } from './shopify-product.service';
 import { ShopifySectionService } from './shopify-section.service';
+import { ShopifyStoreService } from './shopify-store.service';
 
 @Module({
   imports: [HttpModule],
@@ -14,6 +15,7 @@ import { ShopifySectionService } from './shopify-section.service';
     ShopifyThemeService,
     ShopifyProductService,
     ShopifySectionService,
+    ShopifyStoreService,
   ],
   exports: [
     ShopifyService,
@@ -21,6 +23,7 @@ import { ShopifySectionService } from './shopify-section.service';
     ShopifyThemeService,
     ShopifyProductService,
     ShopifySectionService,
+    ShopifyStoreService,
   ],
 })
 export class ShopifyModule {}

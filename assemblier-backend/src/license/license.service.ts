@@ -10,6 +10,9 @@ export interface LicenseStatusResponse {
   shopDomain: string;
   status: LicenseStatus;
   layout: string;
+  language: string;
+  currency: string;
+  targetMarket: string;
   expiresAt: string;
 }
 
@@ -57,6 +60,9 @@ export class LicenseService {
         shopDomain,
         status: 'EXPIRED',
         layout: shop.layout || 'ecommerce',
+        language: shop.language || 'en',
+        currency: shop.currency || 'USD',
+        targetMarket: shop.targetMarket || 'US',
         expiresAt: new Date().toISOString(),
       };
       this.cacheResult(shopDomain, result);
@@ -91,6 +97,9 @@ export class LicenseService {
       shopDomain,
       status: licenseStatus,
       layout: shop.layout || 'ecommerce',
+      language: shop.language || 'en',
+      currency: shop.currency || 'USD',
+      targetMarket: shop.targetMarket || 'US',
       expiresAt: subscription.currentPeriodEnd.toISOString(),
     };
 

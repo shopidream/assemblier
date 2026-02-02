@@ -56,6 +56,15 @@ export class Shop {
   @Column({ type: 'varchar', nullable: true })
   layout: string; // 'ecommerce' | 'business'
 
+  @Column({ nullable: true })
+  language: string; // e.g., 'ko', 'en', 'ja'
+
+  @Column({ nullable: true })
+  currency: string; // e.g., 'KRW', 'USD', 'JPY'
+
+  @Column({ nullable: true })
+  targetMarket: string; // e.g., 'KR', 'US', 'JP'
+
   @CreateDateColumn()
   createdAt: Date;
 
